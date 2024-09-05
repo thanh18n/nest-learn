@@ -1,5 +1,5 @@
-export class BaseResponseDto {
+export class BaseResponseDto<T = any> {
     status: number;
-    message: string
-    data?: any
+    message?: string
+    data?: T
 }
