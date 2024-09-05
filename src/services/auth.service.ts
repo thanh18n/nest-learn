@@ -1,36 +1,67 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AuthDto } from 'src/dtos/auth.dto';
 import { BaseResponseDto } from 'src/dtos/base-response.dto';
 import { User } from 'src/entities/user.entity';
 import { UserRepository } from 'src/repositories/auth.repository';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
     constructor(@InjectRepository(User) private readonly userRepository: UserRepository) { }
 
-    loginUser(authDto: AuthDto): string {
+    async loginUser(authDto: AuthDto): Promise<BaseResponseDto> {
         const { username, password } = authDto;
 
-        if (username === 'admin' && password === 'string') {
-            return 'Login success';
-        }
+        const user = await this.userRepository.findOneBy({ username });
 
-        return 'User not found';
+        if (user) {
+            const res = await bcrypt.compare(password, user.password);
+            if (res) {
+                return {
+                    status: 200,
+                    message: 'Login successfully',
+                }
+            } else {
+                return {
+                    status: 401,
+                    message: 'Username or password is incorrect',
+                }
+            }
+        } else {
+            return {
+                status: 404,
+                message: 'User not found',
+            }
+        }
     }
 
     async sigupUser(authDto: AuthDto): Promise<BaseResponseDto> {
         try {
-            await this.userRepository.save(authDto)
+            const saltRounds = 10;
+            const hashOut = await bcrypt.hash(authDto.password, saltRounds);
+
+            await this.userRepository.save({
+                ...authDto,
+                password: String(hashOut),
+            })
+
             return {
                 status: 201,
                 message: 'Create user successfully',
             };
         } catch (error) {
+            console.log(error);
+
             if (error.code === '23505') {
                 return {
                     status: 409,
                     message: 'Username already exists',
+                }
+            } else {
+                return {
+                    status: 500,
+                    message: 'Internal server error',
                 }
             }
         }
