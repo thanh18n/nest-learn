@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AuthDto } from 'src/dtos/auth.dto';
 import { BaseResponseDto } from 'src/dtos/base-response.dto';
@@ -20,16 +20,19 @@ export class AuthService {
     }
 
     async sigupUser(authDto: AuthDto): Promise<BaseResponseDto> {
-        return this.userRepository.save(authDto).then(() => {
+        try {
+            await this.userRepository.save(authDto)
             return {
                 status: 201,
                 message: 'Create user successfully',
             };
-        }).catch((error) => {
-            return {
-                status: 500,
-                message: error,
+        } catch (error) {
+            if (error.code === '23505') {
+                return {
+                    status: 409,
+                    message: 'Username already exists',
+                }
             }
-        })
+        }
     }
 }
