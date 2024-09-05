@@ -16,12 +16,14 @@ export class UserService {
 
     async getUserDetail(id: number): Promise<BaseResponseDto<UserDto>> {
         const user = await this.userRepository.findOneBy({ id });
-        const { password, ...userWithoutPassword } = user
 
         if (user) {
             return {
                 status: 200,
-                data: userWithoutPassword
+                data: {
+                    id: user.id,
+                    username: user.username,
+                }
             }
         }
 
