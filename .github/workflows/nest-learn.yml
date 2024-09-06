@@ -27,8 +27,9 @@ jobs:
           cache: "npm"
 
       - name: Check for changes in package.json
+        # [[ ! -d node_modules ]] ||
         run: |
-          if [[ ! -d node_modules ]] || git diff --name-only HEAD~1 HEAD | grep -q '\bpackage.json\b'; 
+          if git diff --name-only $(git hash-object -t tree /dev/null) HEAD | grep -q '\bpackage.json\b'; 
             then
               echo "Changes in package.json detected, running npm install";
               npm install;
