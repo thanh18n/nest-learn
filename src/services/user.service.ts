@@ -23,8 +23,10 @@ export class UserService {
                 data: {
                     id: user.id,
                     username: user.username,
+                    createdAt: user.createdAt,
                 }
             }
+
         }
 
         return {

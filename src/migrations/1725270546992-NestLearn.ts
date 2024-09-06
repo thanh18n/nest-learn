@@ -21,6 +21,10 @@ export class NestLearn1725270546992 implements MigrationInterface {
                     {
                         name: 'password',
                         type: 'varchar',
+                    },
+                    {
+                        name: 'createdAt',
+                        type: 'timestamp',
                     }
                 ]
             }), true
