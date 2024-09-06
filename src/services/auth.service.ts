@@ -18,7 +18,6 @@ export class AuthService {
         const { username, password } = authDto;
 
         const user = await this.userRepository.findOneBy({ username });
-
         if (user) {
             const res = await bcrypt.compare(password, user.password);
 
