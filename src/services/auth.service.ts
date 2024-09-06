@@ -5,10 +5,14 @@ import { BaseResponseDto } from 'src/dtos/base-response.dto';
 import { User } from 'src/entities/user.entity';
 import { UserRepository } from 'src/repositories/auth.repository';
 import * as bcrypt from 'bcrypt';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
-    constructor(@InjectRepository(User) private readonly userRepository: UserRepository) { }
+    constructor(@InjectRepository(User)
+    private readonly userRepository: UserRepository,
+        private readonly jwtService: JwtService
+    ) { }
 
     async loginUser(authDto: AuthDto): Promise<BaseResponseDto> {
         const { username, password } = authDto;
@@ -17,10 +21,19 @@ export class AuthService {
 
         if (user) {
             const res = await bcrypt.compare(password, user.password);
+
             if (res) {
+                const accessToken = this.jwtService.sign({
+                    id: user.id,
+                    username: user.username,
+                })
+
                 return {
                     status: 200,
                     message: 'Login successfully',
+                    data: {
+                        accessToken
+                    }
                 }
             } else {
                 return {
@@ -51,8 +64,6 @@ export class AuthService {
                 message: 'Create user successfully',
             };
         } catch (error) {
-            console.log(error);
-
             if (error.code === '23505') {
                 return {
                     status: 409,

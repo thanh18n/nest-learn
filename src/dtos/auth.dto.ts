@@ -7,3 +7,7 @@ export class AuthDto {
     @IsNotEmpty()
     password: string;
 }
+
+export class JwtDTO {
+    username: string;
+}
