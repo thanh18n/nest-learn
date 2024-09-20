@@ -26,14 +26,19 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: "npm"
 
+      # Cache node_modules
+      - name: Cache node_modules
+        uses: actions/cache@v4
+        id: node-modules-cache
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node_modules-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node_modules-
+
       - name: Check for changes in package.json
-        # [[ ! -d node_modules ]] ||
-        run: |
-          if git diff --name-only $(git hash-object -t tree /dev/null) HEAD | grep -q '\bpackage.json\b'; 
-            then
-              echo "Changes in package.json detected, running npm install";
-              npm install;
-            fi
+        run: npm install
+        if: steps.node-modules-cache.outputs.cache-hit != 'true'
 
       - name: Format code
         run: npm run format
