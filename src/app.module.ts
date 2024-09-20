@@ -8,8 +8,7 @@ import { UserModule } from './modules/user.module';
   imports: [
     TypeOrmModule.forRoot(AppDataSource.options),
     AuthModule,
-    UserModule
+    UserModule,
   ],
 })
-
-export class AppModule { }
+export class AppModule {}

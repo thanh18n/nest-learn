@@ -7,17 +7,17 @@
   "license": "UNLICENSED",
   "scripts": {
     "build": "nest build",
-    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+    "format": "prettier --write \"src/**/*.ts\"",
     "start": "nest start",
     "dev": "nest start --watch",
     "debug": "nest start --debug --watch",
     "prod": "node dist/main",
-    "lint": "eslint \"{src,apps,libs,test}/**/*.ts\"m/cli.js migration:create -n",
+    "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "typeorm": "ts-node ./node_modules/typeorm/cli",
-    "mgr:create": "yarn typeorm migration:create ./src/migrations/NestLearn",
-    "mgr:up": "yarn typeorm migration:run -d ./src/ormconfig.ts",
-    "mgr:down": "yarn typeorm migration:revert -d ./src/ormconfig.ts",
-    "mgr:gen": "yarn typeorm migration:generate ./src/migrations/NestLearn -d ./src/ormconfig.ts"
+    "migration:create": "yarn typeorm migration:create ./src/migrations/NestLearn",
+    "migration:up": "yarn typeorm migration:run -d ./src/ormconfig.ts",
+    "migration:down": "yarn typeorm migration:revert -d ./src/ormconfig.ts",
+    "migration:gen": "yarn typeorm migration:generate ./src/migrations/NestLearn -d ./src/ormconfig.ts"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",
